@@ -1,0 +1,165 @@
+﻿@model HumanResources.Models.Entities.Concrete.PersonalAdvance
+
+@{
+    ViewData["Title"] = "Avans Talebi Oluştur";
+}
+
+<h1>Avans Talebi Oluştur</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddAdvance" id="advanceForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @{
+                    DateTime payDate = DateTime.Now;
+
+                    string payYear = payDate.Year.ToString();
+                    string payMonth = payDate.Month.ToString();
+                    string payDay = payDate.Day.ToString();
+
+                    if (Convert.ToInt32(payMonth) < 10) payMonth = "0" + payMonth;
+                    if (Convert.ToInt32(payDay) < 10) payDay = "0" + payDay;
+
+                    string payMinDate = payYear + "-" + payMonth + "-" + payDay;
+
+                    payDate = DateTime.Now.AddMonths(3);
+
+                    payYear = payDate.Year.ToString();
+                    payMonth = payDate.Month.ToString();
+                    payDay = payDate.Day.ToString();
+
+                    if (Convert.ToInt32(payMonth) < 10) payMonth = "0" + payMonth;
+                    if (Convert.ToInt32(payDay) < 10) payDay = "0" + payDay;
+
+                    string payMaxDate = payYear + "-" + payMonth + "-" + payDay;
+                }
+                <label asp-for="PaymentDate" class="control-label"></label>
+                <input asp-for="PaymentDate" id="payDate" type="date" min="@payMinDate" max="@payMaxDate" onchange="SetDate()" class="form-control" />
+                <span id="payDate_error" class="text-danger"></span>
+                @*<span asp-validation-for="PaymentDate" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input type="number" id="amount" onkeyup="ControlAmount()" class="form-control" />
+                <input type="hidden" asp-for="Amount" id="amount_hidden" />
+                <span id="amount_error" class="text-danger"></span>
+                @*<span asp-validation-for="Amount" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="Detail" class="control-label"></label>
+                <input asp-for="Detail" id="detail" class="form-control" />
+                <span id="detail_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdvancePayment.Name" class="control-label"></label>
+                <select asp-for="AdvancePaymentID" class="form-control" id="advances" asp-items="ViewBag.AdvancePaymentID"><option value="">Avans Sebebini Seçiniz...</option></select>
+                <span id="advances_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="button" value="Avans Talebi Oluştur" onclick="CheckRequireds()" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    GetSalary();
+
+    function GetSalary() {
+        $.ajax({
+            url: "/Employee/Advance/GetSalary",
+            type: 'GET',
+            dataType: 'json',
+        }).done(function (result) {
+            $("#amount").attr("max", result);
+        });
+    };
+
+    function SetDate() {
+        if ($("#payDate").val() != "") {
+            var payDate = new Date($("#payDate").val());
+
+            if (payDate.getDay() == 0 || payDate.getDay() == 6) {
+                if (payDate.getDay() == 0) {
+                    payDate.setDate(payDate.getDate() + 1);
+                }
+                else if (payDate.getDay() == 6) {
+                    payDate.setDate(payDate.getDate() + 2);
+                }
+
+                var day = payDate.getDate();
+                var month = payDate.getMonth() + 1;
+                var year = payDate.getFullYear();
+
+                if (month < 10) month = "0" + month;
+                if (day < 10) day = "0" + day;
+
+                $('#payDate').val(year + '-' + month + '-' + day);
+                payDate = new Date($("#payDate").val());
+            }
+
+            var today = new Date();
+            var maxDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0).setMonth(new Date().getMonth() + 3);
+            if (today.setHours(0, 0, 0, 0) > payDate.setHours(0, 0, 0, 0) || maxDay < payDate.setHours(0, 0, 0, 0)) {
+                $('#payDate_error').text('Lütfen 3 ay aralığında ileri tarihli giriş yapınız!');
+            }
+            else {
+                $('#payDate_error').text('');
+            }
+        }
+    }
+
+    function ControlAmount() {
+        var amount = $("#amount").val();
+        var hidden = amount.replace('.', ',');
+        $("#amount_hidden").val(hidden);
+
+        var salary = Number(document.getElementById("amount").getAttribute("max"));
+        if (amount >= salary) {
+            $("#amount_error").text("Avans tutarı " + salary + " TL'den fazla olamaz.");
+        }
+        else {
+            $("#amount_error").text("");
+        }
+    }
+
+    function CheckRequireds() {
+        var valid = true;
+
+        if ($("#amount").val() == "" || $("#amount").val() == 0) {
+            $("#amount_error").text("Lütfen avans tutarını giriniz!");
+            valid = false;
+        }
+        else $("#amount_error").text("");
+
+        if ($("#advances").val() == 0) {
+            $("#advances_error").text("Lütfen avans sebebini seçiniz!");
+            valid = false;
+        }
+        else $("#advances_error").text("");
+
+        if ($("#detail").val() == 0) {
+            $("#detail_error").text("Lütfen avans detayını giriniz!");
+            valid = false;
+        }
+        else $("#detail_error").text("");
+
+        if ($("#payDate").val() == "") {
+            $("#payDate_error").text("Lütfen tarih girişi yapınız!");
+            valid = false;
+        }
+        else if ($("#payDate_error").text() == "Lütfen tarih girişi yapınız!") $("#payDate_error").text("");
+
+        if ($("#payDate_error").text() != "") {
+            valid = false;
+        }
+
+        if (valid == true) {
+            $("#advanceForm").submit();
+        }
+    }
+</script>

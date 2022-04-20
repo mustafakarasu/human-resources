@@ -1,0 +1,167 @@
+﻿@model HumanResources.Models.Entities.Concrete.PersonalExpense
+
+@{
+    ViewData["Title"] = "Harcama Bildirimi Oluştur";
+}
+
+<h1>Harcama Bildirimi Oluştur</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddExpense" id="expenseForm" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @{
+                    DateTime expDate = DateTime.Now.AddMonths(-1);
+
+                    string expYear = expDate.Year.ToString();
+                    string expMonth = expDate.Month.ToString();
+                    string expDay = expDate.Day.ToString();
+
+                    if (Convert.ToInt32(expMonth) < 10) expMonth = "0" + expMonth;
+                    if (Convert.ToInt32(expDay) < 10) expDay = "0" + expDay;
+
+                    string expMinDate = expYear + "-" + expMonth + "-" + expDay;
+
+                    expDate = DateTime.Now;
+
+                    expYear = expDate.Year.ToString();
+                    expMonth = expDate.Month.ToString();
+                    expDay = expDate.Day.ToString();
+
+                    if (Convert.ToInt32(expMonth) < 10) expMonth = "0" + expMonth;
+                    if (Convert.ToInt32(expDay) < 10) expDay = "0" + expDay;
+
+                    string expMaxDate = expYear + "-" + expMonth + "-" + expDay;
+                }
+                <label asp-for="ExpenseDate" class="control-label"></label>
+                <input asp-for="ExpenseDate" type="date" id="expDate" min="@expMinDate" max="@expMaxDate" onchange="SetDate()" class="form-control" />
+                <span id="expDate_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" type="number" id="amount" onkeyup="ControlAmount()" class="form-control" />
+                <input type="hidden" asp-for="Amount" id="amount_hidden" />
+                <span id="amount_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Detail" class="control-label"></label>
+                <input asp-for="Detail" id="detail" class="form-control" />
+                <span id="detail_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label"></label>
+                <input asp-for="ImageUrl" type="file" id="expImage" accept="image/*" class="form-control-file" onchange="validateFileType()" required/>
+                <br />
+                <span id="expImage_error" class="text-danger"></span>
+                <input asp-for="ImageUrl" type="hidden"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Expense.Name" class="control-label"></label>
+                <select asp-for="ExpenseID" id="expenses" class="form-control" asp-items="ViewBag.ExpenseID"><option value="">Harcama Sebebini Seçiniz...</option></select>
+                <span id="expenses_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="button" value="Harcama Bildirimi Oluştur" onclick="CheckRequireds()" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+
+    function SetDate() {
+        if ($("#expDate").val() != "") {
+            var expDate = new Date($("#expDate").val());
+
+            if (expDate.getDay() == 0 || expDate.getDay() == 6) {
+                if (expDate.getDay() == 0) {
+                    expDate.setDate(expDate.getDate() - 2);
+                }
+                else if (expDate.getDay() == 6) {
+                    expDate.setDate(expDate.getDate() - 1);
+                }
+
+                var day = expDate.getDate();
+                var month = expDate.getMonth() + 1;
+                var year = expDate.getFullYear();
+
+                if (month < 10) month = "0" + month;
+                if (day < 10) day = "0" + day;
+
+                $('#expDate').val(year + '-' + month + '-' + day);
+                expDate = new Date($("#expDate").val());
+            }
+
+            var today = new Date();
+            var minDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0).setMonth(new Date().getMonth() -1);
+            if (today.setHours(0, 0, 0, 0) < expDate.setHours(0, 0, 0, 0) || minDay > expDate.setHours(0, 0, 0, 0)) {
+                $('#expDate_error').text('Lütfen 1 ay aralığında geçmiş tarihli giriş yapınız!');
+            }
+            else {
+                $('#expDate_error').text('');
+            }
+        }
+    }
+
+    function validateFileType() {
+        var fileName = document.getElementById("expImage").value;
+        var idxDot = fileName.lastIndexOf(".") + 1;
+        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+
+        if (fileName == "") {
+            $("#expImage_error").text("Lütfen harcama fişi görseli yükleyiniz!");
+        }
+        else if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
+            $("#expImage_error").text("");
+        }
+        else {
+            $("#expImage_error").text("Sadece jpg, jpeg veya png formatında yükleme yapabilirsiniz!");
+        }
+    }
+
+    function ControlAmount() {
+        var amount = $("#amount").val();
+        var hidden = amount.replace('.', ',');
+        $("#amount_hidden").val(hidden);
+    }
+
+    function CheckRequireds() {
+        var valid = true;
+
+        if ($("#amount").val() == "" || $("#amount").val() == 0) {
+            $("#amount_error").text("Lütfen harcama tutarını giriniz!");
+            valid = false;
+        }
+        else $("#amount_error").text("");
+
+        if ($("#expenses").val() == 0) {
+            $("#expenses_error").text("Lütfen harcama sebebini seçiniz!");
+            valid = false;
+        }
+        else $("#expenses_error").text("");
+
+        if ($("#detail").val() == 0) {
+            $("#detail_error").text("Lütfen harcama detayını giriniz!");
+            valid = false;
+        }
+        else $("#detail_error").text("");
+
+        if ($("#expDate").val() == "") {
+            $("#expDate_error").text("Lütfen tarih girişi yapınız!");
+            valid = false;
+        }
+        else if ($("#expDate_error").text() == "Lütfen tarih girişi yapınız!") $("#expDate_error").text("");
+
+        if ($("#expDate_error").text() != "" || $("#expImage_error").text() != "") {
+            valid = false;
+        }
+
+        if (valid == true) {
+            $("#expenseForm").submit();
+        }
+    }
+</script>

@@ -1,0 +1,90 @@
+﻿<div id="layoutSidenav_nav">
+    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu">
+            <div class="nav">
+                @*<div class="sb-sidenav-menu-heading">Menü</div>*@
+                <a class="nav-link" asp-area="CompanyManager" asp-controller="Home" asp-action="Index">
+                    <div class=*"sb-nav-link-icon"*><i class="" @*="fas fa-tachometer-alt"*@></i></div>
+                   MENU
+                </a>
+                  @*<div class="sb-sidenav-menu-heading">Personeller</div>*@
+                      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts4" aria-expanded="false" aria-controls="collapseLayouts4">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-edit"></i></div>
+                                Kullanıcı Bilgileri
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                 <div class="collapse" id="collapseLayouts4" aria-labelledby="headingone" data-parent="#sidenavAccordion">
+                     <nav class="sb-sidenav-menu-nested nav">
+                         <a class="nav-link" asp-area="CompanyManager" asp-action="Update" asp-controller="CompanyManager" asp-route-id="@Convert.ToInt32(Context.User.FindFirst("id").Value)">Bilgilerimi Güncelle</a>
+                         <a class="nav-link" asp-action="PasswordRefresh" asp-controller="CompanyManager">Şifre Yenileme</a>
+                         
+                     </nav>
+                            </div>
+                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Personeller
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                 <div class="collapse" id="collapseLayouts" aria-labelledby="headingone" data-parent="#sidenavAccordion">
+                     <nav class="sb-sidenav-menu-nested nav">
+                         <a class="nav-link" asp-area="CompanyManager" asp-action="AddEmploee" asp-controller="CompanyManager">Personel ekle</a>
+                         <a class="nav-link" asp-area="CompanyManager" asp-action="Index" asp-controller="CompanyManager">Personelleri Listele</a>
+                         <a class="nav-link" asp-area="CompanyManager" asp-controller="Home" asp-action="Advances">Avans talepleri</a>
+                         <a class="nav-link" asp-area="CompanyManager" asp-controller="Home" asp-action="Permissions" >İzin talepleri</a>
+                         <a class="nav-link" asp-area="CompanyManager" asp-controller="Home" asp-action="Expenses">Harcamalar</a>
+                     </nav>
+                            </div>
+          
+                     @*<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts2" aria-expanded="false" aria-controls="collapseLayouts2">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Paketler
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                 <div class="collapse" id="collapseLayouts2" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                     <nav class="sb-sidenav-menu-nested nav">
+                         <a class="nav-link" href="layout-static.html">Paket Listele</a>
+                         <a class="nav-link" href="layout-static.html">Paket Ekle</a>
+                         <a class="nav-link" href="layout-sidenav-light.html">Paket Güncelle</a>
+                         <a class="nav-link" href="layout-sidenav-light.html">Paket Sil</a>
+                     </nav>
+                            </div>*@
+             
+           
+                 
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts3" aria-expanded="false" aria-controls="collapseLayouts3">
+                                <div class="sb-nav-link-icon"><i class="fas fa-clipboard"></i></div>
+                               Görüşler
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                  <div class="collapse" id="collapseLayouts3" aria-labelledby="headingone" data-parent="#sidenavAccordion">
+                      <nav class="sb-sidenav-menu-nested nav">
+                          <a class="nav-link" asp-action="MyIdeas" asp-controller="CompanyManager">Görüşlerim</a>
+                          <a class="nav-link" asp-action="IdeaInfo" asp-controller="CompanyManager">Görüş Bildir</a>
+                      </nav>
+                            </div>
+                      @*<a class="nav-link" href="index.html">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                  Paket Bilgileri
+                </a>*@
+
+                @*<a class="nav-link" asp-area="CompanyManager" asp-controller="Home" asp-action="Permissions">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                 Görüş Bildir
+                </a>*@
+
+                @*<a class="nav-link" href="index.html">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    Paketler
+                </a>*@
+
+            </div>
+        </div>
+        <div class="sb-sidenav-footer">
+            <div class="small">Giriş Yapan Kullanıcı:</div>
+            <a class="nav-link" asp-area="CompanyManager" asp-controller="CompanyManager" asp-action="Detail" asp-route-id="@Convert.ToInt32(Context.User.FindFirst("id").Value)">
+                @Context.User.FindFirst("isim").Value.ToString()
+            </a>
+            
+        </div>
+    </nav>
+</div>

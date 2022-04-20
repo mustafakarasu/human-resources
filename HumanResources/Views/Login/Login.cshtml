@@ -1,0 +1,177 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+@model User
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#show_password').hover(function show() {
+            //Change the attribute to text
+            $('#txtPassword').attr('type', 'text');
+            $('.icon').removeClass('fa fa-eye-slash').addClass('fa fa-eye');
+        },
+            function () {
+                //Change the attribute back to password
+                $('#txtPassword').attr('type', 'password');
+                $('.icon').removeClass('fa fa-eye').addClass('fa fa-eye-slash');
+            });
+        //CheckBox Show Password
+        $('#ShowPassword').click(function () {
+            $('#Password').attr('type', $(this).is(':checked') ? 'text' : 'password');
+        });
+    });
+
+    //function mailPwControl() { // Mail-Şifre giriş kontrolü
+    //    var user = [$("#mail").val(), $("#txtPassword").val()]
+    //    $("#mail_error").text("");
+    //    $("#txtPassword_error").text("");
+
+    //    $.ajax({
+    //        url: "/Login/MailPasswordControl",
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        data: { "user": user }
+    //    }).done(function (result) {
+    //        if (result) {
+    //            $("#userForm").submit();
+    //        }
+    //        else {
+    //            if ($("#mail").val() == "" && $("#txtPassword").val() == "") {
+    //                $("#mail_error").text("Lütfen email adresini giriniz!");
+    //                $("#pwd_error").text("Lütfen parolayı giriniz!");
+    //            }
+
+    //            else if ($("#mail").val() == "") {
+    //                $("#mail_error").text("Lütfen email adresini giriniz!");
+    //            }
+
+    //            else if ($("#txtPassword").val() == "") {
+    //                $("#txtPassword_error").text("Lütfen parolayı giriniz!");
+    //            }
+
+    //            else {
+    //                alert("Mail adresi veya şifrenizi hatalı girdiniz!");
+    //            }
+    //            return;
+    //        }
+    //    });
+    //}
+</script>
+
+<!--Login view ekranında şifre görüntüleme işlemi yapıldı -->
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="row" style="margin-top: 50px;">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="col-lg-10 offset-lg-1">
+            <div class="panel panel-default panel-info">
+                <div class="panel-heading text-center col-lg-11">
+                    <h3>Giriş Paneli</h3>
+                </div>
+                <br />
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger">
+                        <span>@ViewBag.ErrorMessage</span>
+                    </div>
+                }
+                <div class="panel-body">
+                    <form id="userForm" asp-action="Login">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="glyphicon glyphicon-user"></i>
+                            </div>
+                            <input type="email" asp-for="Email" id="mail" class="form-control" placeholder="E-posta adresi giriniz..." />
+                            <br />
+                        </div>
+                        <span asp-validation-for="Email" id="mail_error" class="text-danger"></span>
+                        <br />
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="glyphicon glyphicon-lock"></i>
+                            </div>
+                            <input type="password" id="txtPassword" asp-for="Password" class="form-control" placeholder="Parola giriniz..." />
+                            <br />
+
+                            <asp:TextBox ID="txtPassword2" TextMode="Password" runat="server" CssClass="form-control"></asp:TextBox>
+                            <div class="input-group-append">
+                                <button id="show_password" class="btn btn-primary" type="button">
+                                    <span class="fa fa-eye-slash icon"></span>
+                                </button>
+                            </div>
+                            <br />
+                            <!--   -->
+                        </div>
+                        <span asp-validation-for="Password" id="txtPassword_error" class="text-danger"></span>
+                        <br />
+                        <input type="submit" id="Password" onclick="mailPwControl()" class="btn btn-success btn-block" style="min-width: 100%;" asp-controller="Login" asp-action="Login" name="name" value="Giriş Yap" />
+                    </form>
+                </div>
+
+                <div class="panel-footer">
+                    @*<h5 class="text-center">&copy; Bilge Adam Akademi - @DateTime.Now.Year</h5>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<script>
+
+        //$("#showPw").on("mouseenter", function () { // Parola göster/gizle
+        //    $("#pwd").attr("type", "text");
+        //    document.getElementById("symbol").classList.remove('fa-eye-slash', 'text-black-50');
+        //    document.getElementById("symbol").classList.add('fa-eye');
+        //});
+        //$("#showPw").on("mouseleave", function () {
+        //    $("#pwd").attr("type", "password");
+        //    document.getElementById("symbol").classList.remove('fa-eye');
+        //    document.getElementById("symbol").classList.add('fa-eye-slash', 'text-black-50');
+        //});
+
+        function mailPwControl() { // Mail-Şifre giriş kontrolü
+            var user = [$("#mail").val(), $("#pwd").val()]
+            $("#mail_error").text("");
+            $("#pwd_error").text("");
+
+            $.ajax({
+                url: "/Login/MailPasswordControl",
+                type: 'POST',
+                dataType: 'json',
+                data: { "user": user }
+            }).done(function (result) {
+                if (result) {
+                    $("#userForm").submit();
+                }
+                else {
+                    if ($("#mail").val() == "" && $("#pwd").val() == "") {
+                        $("#mail_error").text("Lütfen email adresini giriniz!");
+                        $("#pwd_error").text("Lütfen parolayı giriniz!");
+                    }
+
+                    else if ($("#mail").val() == "") {
+                        $("#mail_error").text("Lütfen email adresini giriniz!");
+                    }
+
+                    else if ($("#pwd").val() == "") {
+                        $("#pwd_error").text("Lütfen parolayı giriniz!");
+                    }
+
+                    else {
+                        console.log($("#pwd").val());
+                        alert("Mail adresi veya şifrenizi hatalı girdiniz!");
+                    }
+                    return;
+                }
+            });
+        }
+    </script>*@

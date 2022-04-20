@@ -1,0 +1,83 @@
+﻿@model HumanResources.Models.Entities.Concrete.User
+
+@{
+    ViewData["Title"] = "UpdateEmployee";
+}
+
+<h1>UpdateEmployee</h1>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="UpdateEmployee">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HireDate" class="control-label"></label>
+                <input asp-for="HireDate" class="form-control" />
+                <span asp-validation-for="HireDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Unit" class="control-label"></label>
+                <input asp-for="Unit" class="form-control" />
+                <span asp-validation-for="Unit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GraduatedFromUniversity" class="control-label"></label>
+                <input asp-for="GraduatedFromUniversity" class="form-control" />
+                <span asp-validation-for="GraduatedFromUniversity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdentityNumber" class="control-label"></label>
+                <input asp-for="IdentityNumber" class="form-control" />
+                <span asp-validation-for="IdentityNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                <label asp-for="Salary" class="control-label"></label>
+                <input asp-for="Salary" class="form-control" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>*@
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="RoleId" />
+            <input type="hidden" asp-for="CompanyID" />
+            <input type="hidden" asp-for="CreatedDate" />
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="Password" />
+            <input type="hidden" asp-for="FirstPasswordEnter" />
+            <input type="hidden" asp-for="IsActive" />
+            <div class="form-group">
+                <input type="submit" value="Güncelle" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

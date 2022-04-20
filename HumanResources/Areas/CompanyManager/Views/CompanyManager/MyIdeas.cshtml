@@ -1,0 +1,48 @@
+﻿@model IEnumerable<HumanResources.Models.Entities.Concrete.Idea>
+
+@{
+    ViewData["Title"] = "Görüşlerim";
+}
+
+<h1>Görüşlerim</h1>
+
+<p>
+    <a asp-action="IdeaInfo">Yeni Görüş Bildir</a>
+</p>
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Details)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProcessDate)
+            </th>
+           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Details)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProcessDate)
+            </td>
+            <td>
+                <a asp-action="UpdateIdea" asp-route-id="@item.Id">Güncelle</a> |
+                <a asp-action="DetailIdea" asp-route-id="@item.Id">Detaylar</a> |
+                <a asp-action="DeleteIdea" asp-route-id="@item.Id">Sil</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

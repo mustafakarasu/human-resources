@@ -1,0 +1,264 @@
+﻿@model HumanResources.Models.Entities.Concrete.PersonalPermit
+
+@{
+    ViewData["Title"] = "İzin Talebi Oluştur";
+}
+
+<h1>İzin Talebi Oluştur</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Permit" id="permitForm" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" type="date" id="startDate" class="form-control" onchange="AllControls()" onkeydown="return false" />
+                <span id="startDate_error" class="text-danger"></span>
+                <span id="startDate_error2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">İzin Gün Sayısı</label>
+                <input type="text" id="numberOfDays" class="form-control" onkeyup="AllControls()" required />
+                <span class="text-danger" id="numberOfDays_error"></span>
+                <input asp-for="EndDate" type="date" class="form-control" id="endDate" hidden />
+                @*<span asp-validation-for="EndDate" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label"></label>
+                <span id="endDate_text">:</span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Permission.Name" class="control-label"></label>
+                <select asp-for="PermissionID" id="permissions" onchange="AllControls()" class="form-control" asp-items="ViewBag.PermissionID"><option value="">İzin Sebebini Seçiniz...</option></select>
+                <span id="permissions_error" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="file" style="display: none;">
+                <label asp-for="FileUrl" class="control-label"></label>
+                <input asp-for="FileUrl" type="file" id="perFile" accept="image/*,.pdf" class="form-control-file" onchange="validateFileType()" required />
+                <br />
+                <span id="perFile_error" class="text-danger"></span>
+                <input asp-for="FileUrl" type="hidden" />
+                <br />
+            </div>
+            <div class="form-group">
+                <input type="button" value="İzin Talebi Oluştur" class="btn btn-primary" onclick="CheckRequireds()" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    DocumentRequired($("#permissions").val());
+    AllControls();
+
+    function DocumentRequired(id) {
+        $.ajax({
+            url: "/Employee/Employee/DocumentRequired",
+            type: 'POST',
+            dataType: 'json',
+            data: { "id": id }
+        }).done(function (result) {
+            if (result == true) {
+                $("#file").attr("style", "display: initial;");
+
+                @{
+                    DateTime pastDate = DateTime.Now.AddMonths(-2);
+
+                    string pastYear = pastDate.Year.ToString();
+                    string pastMonth = pastDate.Month.ToString();
+                    string pastDay = pastDate.Day.ToString();
+
+                    if (Convert.ToInt32(pastMonth) < 10) pastMonth = "0" + pastMonth;
+                    if (Convert.ToInt32(pastDay) < 10) pastDay = "0" + pastDay;
+
+                    string pastMinDate = pastYear + "-" + pastMonth + "-" + pastDay;
+
+                    pastDate = DateTime.Now.AddDays(-1);
+
+                    pastYear = pastDate.Year.ToString();
+                    pastMonth = pastDate.Month.ToString();
+                    pastDay = pastDate.Day.ToString();
+
+                    if (Convert.ToInt32(pastMonth) < 10) pastMonth = "0" + pastMonth;
+                    if (Convert.ToInt32(pastDay) < 10) pastDay = "0" + pastDay;
+
+                    string pastMaxDate = pastYear + "-" + pastMonth + "-" + pastDay;
+            }
+
+                if (new Date() <= new Date($('#startDate').val())) {
+                    $('#startDate_error').text('Lütfen 2 ay aralığında geçmiş tarihli giriş yapınız!');
+                }
+                else {
+                    $('#startDate_error').text('');
+                }
+
+                $('#startDate').attr('min', '@pastMinDate');
+                $('#startDate').attr('max', '@pastMaxDate');
+            }
+            else {
+                $("#file").attr("style", "display: none;");
+                @{
+                    DateTime futureDate = DateTime.Now.AddDays(1);
+
+                    string futureYear = futureDate.Year.ToString();
+                    string futureMonth = futureDate.Month.ToString();
+                    string futureDay = futureDate.Day.ToString();
+
+                    if (Convert.ToInt32(futureMonth) < 10) futureMonth = "0" + futureMonth;
+                    if (Convert.ToInt32(futureDay) < 10) futureDay = "0" + futureDay;
+
+                    string futureMinDate = futureYear + "-" + futureMonth + "-" + futureDay;
+
+                    futureDate = DateTime.Now.AddMonths(2);
+
+                    futureYear = futureDate.Year.ToString();
+                    futureMonth = futureDate.Month.ToString();
+                    futureDay = futureDate.Day.ToString();
+
+                    if (Convert.ToInt32(futureMonth) < 10) futureMonth = "0" + futureMonth;
+                    if (Convert.ToInt32(futureDay) < 10) futureDay = "0" + futureDay;
+
+                    string futureMaxDate = futureYear + "-" + futureMonth + "-" + futureDay;
+            }
+                if (new Date() >= new Date($('#startDate').val())) {
+                    $('#startDate_error').text('Lütfen 2 ay aralığında ileri tarihli giriş yapınız!');
+                }
+                else {
+                    $('#startDate_error').text('');
+                }
+
+                $('#startDate').attr('min', '@futureMinDate');
+                $('#startDate').attr('max', '@futureMaxDate');
+            }
+        });
+    }
+
+    function onlyNumbers(num) {
+        if (/[^0-9]+/.test(num.val())) {
+            num.val(num.val().replace(/[^0-9]*/g, ""));
+        }
+    }
+
+    function GetEndDate(startDate) {
+        var days = $("#numberOfDays").val();
+        var permissionID = $("#permissions").val();
+
+        $.ajax({
+            url: "/Employee/Employee/GetEndDate",
+            type: 'POST',
+            dataType: 'json',
+            data: { "startDate": startDate, "id": permissionID, "days": days }
+        }).done(function (result) {
+            var endDate = new Date(result.endDate);
+
+            var day = endDate.getDate();
+            var month = endDate.getMonth() + 1;
+            var year = endDate.getFullYear();
+
+            if (month < 10) month = "0" + month;
+            if (day < 10) day = "0" + day;
+
+            $('#endDate').val(year + '-' + month + '-' + day);
+            $('#endDate_text').text(": " + day + "." + month + "." + year);
+
+            if (permissionID == 0 || permissionID == 3 || permissionID == 4 || permissionID == 9)
+                $("#numberOfDays").removeAttr('readonly');
+            else
+                $('#numberOfDays').attr('readonly', 'readonly');
+
+            $('#numberOfDays').val(Number(result.totalDays));
+
+            if (!result.isValid) {
+                $("#startDate_error2").text("Bu tarih aralığında zaten izniniz bulunmaktadır. Lütfen başka tarih aralığı giriniz!");
+            }
+            else {
+                $("#startDate_error2").text("");
+            }
+        });
+    }
+
+    function AllControls() {
+        var permissionID = $("#permissions").val();
+
+        DocumentRequired(permissionID);
+
+        onlyNumbers($("#numberOfDays"));
+
+        if ($("#startDate").val() != "") {
+            var strDate = new Date($("#startDate").val());
+
+            if (strDate.getDay() == 0 || strDate.getDay() == 6) {
+                if (strDate.getDay() == 0) {
+                    strDate.setDate(strDate.getDate() + 1);
+                }
+                else if (strDate.getDay() == 6) {
+                    strDate.setDate(strDate.getDate() - 1);
+                }
+                
+                var day = strDate.getDate();
+                var month = strDate.getMonth() + 1;
+                var year = strDate.getFullYear();
+
+                if (month < 10) month = "0" + month;
+                if (day < 10) day = "0" + day;
+
+                $('#startDate').val(year + '-' + month + '-' + day);
+            }
+
+            GetEndDate($("#startDate").val());
+        }
+    }
+
+    function CheckRequireds() {
+        var valid = true;
+
+        if ($("#file").css('display') != "none") {
+            validateFileType();
+        }
+
+        if ($("#numberOfDays").val() == "" || $("#numberOfDays").val() == 0) {
+            $("#numberOfDays_error").text("Lütfen sıfırdan büyük bir değer giriniz!");
+            valid = false;
+        }
+        else $("#numberOfDays_error").text("");
+
+        if ($("#permissions").val() == 0) {
+            $("#permissions_error").text("Lütfen izin sebebini seçiniz!");
+            valid = false;
+        }
+        else $("#permissions_error").text("");
+
+        if ($("#startDate").val() == "") {
+            $("#startDate_error").text("Lütfen tarih girişi yapınız!");
+            valid = false;
+        }
+        else $("#startDate_error").text("");
+
+        if ($("#startDate_error").text() != "" || $("#startDate_error2").text() != "" || $("#perFile_error").text() != "") {
+            valid = false;
+        }
+
+        if (valid == true) {
+            $("#permitForm").submit();
+        }
+    }
+
+    function validateFileType() {
+        var fileName = document.getElementById("perFile").value;
+        var idxDot = fileName.lastIndexOf(".") + 1;
+        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+
+        if (fileName == "") {
+            $("#perFile_error").text("Lütfen resim veya pdf formatında belge yükleyiniz!");
+        }
+        else if (extFile == "jpg" || extFile == "jpeg" || extFile == "png" || extFile == "pdf") {
+            $("#perFile_error").text("");
+        }
+        else {
+            $("#perFile_error").text("Sadece jpg, jpeg, png veya pdf formatında yükleme yapabilirsiniz!");
+        }
+    }
+</script>

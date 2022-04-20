@@ -1,0 +1,64 @@
+﻿@model IEnumerable<HumanResources.Models.Entities.Concrete.User>
+<div class="row">
+    <div class="col-xl-6 col-md-6">
+        <div class="card bg-success text-white mb-4" style="margin-top:79px;">
+            <div class="card-header">Yaklaşan Doğum Günleri</div>
+            <div class="card-body">
+
+                @foreach (var item in Model)
+                {
+                    //var today = DateTime.Today;
+                    //var nowYearBirthDate = new DateTime(today.Year, item.BirthDate.Value.Month, item.BirthDate.Value.Day);
+
+                    var remainderDay = DateTime.Today.Subtract(new DateTime(DateTime.Now.Year, item.BirthDate.Value.Month, item.BirthDate.Value.Day)).TotalDays;
+
+
+                    //var remainderDay = (nowYearBirthDate - DateTime.Today).TotalDays;
+                    if (remainderDay > 0)
+                    {
+                        remainderDay = 365 - remainderDay;
+                    }
+                    else
+                    {
+                        remainderDay *= -1;
+                    }
+
+                    <div class="d-flex align-content-md-start">
+                        <img src="@item.ImageURL" height="50" class="rounded-circle" />
+
+                        <div style="display:inline-block; margin-left:15px;">
+                            <span>@(item.FirstName + " " + item.LastName)</span>
+                            <br />
+                            <span>@item.BirthDate.Value.ToShortDateString()</span>
+                        </div>
+
+                        <div class="remainder-day">
+
+                            <span>Kalan Gün Sayısı: </span>
+                            <span style="font-size:24px; color:green;">@remainderDay</span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+
+                }
+            </div>
+
+        </div>
+    </div>
+    <div class="col-xl-5 col-md-5 offset-1">
+        <div class="card bg-warning text-white mb-4" style="margin-top:79px;">
+            <div class="card-header">Paket Bilgileri</div>
+            <div class="card-body">
+                <p>Şirketinizin Satın Adığı Paket: <span class="numberInfo">@ViewBag.cp</span></p>
+                <p>Paketin Bitiş Tarihi : <span class="numberInfo">@ViewBag.ed</span></p>
+                <p>Paketin Toplam Fiyatı: <span class="numberInfo">@ViewBag.tp</span></p>
+            </div>
+        </div>
+        @*<div class="card-footer d-flex align-items-center justify-content-between">
+
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>*@
+    </div>
+</div>

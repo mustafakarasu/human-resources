@@ -1,0 +1,72 @@
+﻿<div id="layoutSidenav_nav">
+    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu">
+            <div class="nav">
+                <div class="sb-sidenav-menu-heading">MENU</div>
+                @*<a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            Dashboard
+        </a>*@
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                    <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
+                    Site Yöneticileri
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseLayouts" aria-labelledby="headingone" data-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link" asp-area="Admin" asp-action="Add" asp-controller="Admin">Site Yöneticisi Ekle</a>
+                        <a class="nav-link" asp-area="Admin" asp-action="Index" asp-controller="Admin">Site Yöneticilerini Listele</a>
+                    </nav>
+                </div>
+
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts2" aria-expanded="false" aria-controls="collapseLayouts2">
+                    <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                    Şirketler
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseLayouts2" aria-labelledby="headingone" data-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link" asp-area="Admin" asp-action="Add" asp-controller="Company">Şirket Ekle</a>
+                        <a class="nav-link" asp-area="Admin" asp-action="Index" asp-controller="Company">Şirketleri Listele</a>
+                    </nav>
+                </div>
+
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts3" aria-expanded="false" aria-controls="collapseLayouts3">
+                    <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
+                    Paketler
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseLayouts3" aria-labelledby="headingone" data-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link" asp-area="Admin" asp-action="Add" asp-controller="Package">Paket Ekle</a>
+                        <a class="nav-link" asp-area="Admin" asp-action="Index" asp-controller="Package">Paketleri Listele</a>
+                    </nav>
+                </div>
+
+                @*<a class="nav-link" asp-area="Admin" asp-controller="Admin" asp-action="Index">
+            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+            Site Yöneticileri
+        </a>*@
+                @*<a class="nav-link" asp-area="Admin" asp-controller="Company" asp-action="Index">
+            <div class="sb-nav-link-icon"><i class="fas fa-th-list"></i></div>
+            Şirketler
+        </a>*@
+                @*<a class="nav-link" asp-area="Admin" asp-controller="Employee" asp-action="Index">
+            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+            Personeller
+        </a>*@
+                @*<a class="nav-link" asp-area="Admin" asp-controller="Package" asp-action="Index">
+                    <div class="sb-nav-link-icon"><i class="fas fa-th-list"></i></div>
+                    Paketler
+                </a>*@
+
+            </div>
+        </div>
+        <div class="sb-sidenav-footer">
+            <div class="small">Giriş Yapan Kullanıcı:</div>
+        <a class="nav-link" asp-area="Admin" asp-controller="Admin" asp-action="Detail" asp-route-id="@Convert.ToInt32(Context.User.FindFirst("id").Value)">            
+            @Context.User.FindFirst("isim").Value.ToString()
+        </a>
+        </div>
+    </nav>
+</div>

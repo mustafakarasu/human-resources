@@ -1,0 +1,493 @@
+﻿@model IEnumerable<HumanResources.Models.Entities.Concrete.PersonalPermit>
+
+@{
+    ViewData["Title"] = "İzin Talepleri";
+}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active" id="btnOnHold">
+                <a class="nav-link font-weight-bold" href="#" onclick="Change('btnOnHold', '#onHold')">Beklemedeki İzinler</a>
+            </li>
+            <li class="nav-item font-weight-bold" id="btnApproved">
+                <a class="nav-link" href="#" onclick="Change('btnApproved', '#approved')">Onaylanan İzinler</a>
+            </li>
+            <li class="nav-item font-weight-bold" id="btnRejected">
+                <a class="nav-link" href="#" onclick="Change('btnRejected', '#rejected')">Reddedilen İzinler</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="onHold">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.ImageURL)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.FirstName) @Html.DisplayNameFor(model => model.User.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Permission.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Where(x => x.StatusID == 1).ToList())
+            {
+                <tr id="onHold_@item.Id">
+                    <td>
+                        @if (item.User.ImageURL != null)
+                        {
+                            <img src="~/@item.User.ImageURL" height="50" width="50" class="rounded-circle" />
+                        }
+                        else
+                        {
+                            <img src="~/Images/UserImages/default.png" height="50" width="50" class="rounded-circle" />
+                        }
+                        <label id="onHold_image_@item.Id" hidden>@Html.DisplayFor(modelItem => item.User.ImageURL)</label>
+                    </td>
+                    <td>
+                        <label id="onHold_name_@item.Id">@Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)</label>
+                    </td>
+                    <td>
+                        <label id="onHold_startDate_@item.Id">@item.StartDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="onHold_endDate_@item.Id">@item.EndDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="onHold_perName_@item.Id">@Html.DisplayFor(modelItem => item.Permission.Name)</label>
+                    </td>
+                    <td>
+                        <a href="#" onclick="Detail(@item.Id, 'onHold')" data-toggle="modal" data-target="#detailModalLong">Detay</a> <label class="remove_@item.Id">|</label>
+                        <a href="#" class="remove_@item.Id" onclick="Approve(@item.Id)">Onayla</a> <label class="remove_@item.Id">|</label>
+                        <a href="#" class="remove_@item.Id" id="reject_@item.Id" data-toggle="modal" data-target="#rejectModal" onclick="SetId(@item.Id)">Reddet</a>
+
+                        <label id="onHold_reqDate_@item.Id" hidden>@item.RequestDate.ToLongDateString()</label>
+                        <label id="onHold_file_@item.Id" hidden>@item.FileUrl</label>
+                        <label id="onHold_docReq_@item.Id" hidden>@item.Permission.DocumentRequired</label>
+                        <label id="onHold_rejReason_@item.Id" hidden>@item.RejectReason</label>
+                        <label id="onHold_appDate_@item.Id" hidden>@item.ApprovalDate?.ToLongDateString()</label>
+                        <label id="onHold_rejDate_@item.Id" hidden>@item.RejectionDate?.ToLongDateString()</label>
+                        <label id="onHold_statName_@item.Id" hidden>@item.Status.Name</label>
+                        <label id="onHold_email_@item.Id" hidden>@item.User.Email</label>
+                        <label id="onHold_phone_@item.Id" hidden>@item.User.Phone</label>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="approved" style="display: none;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.ImageURL)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.FirstName) @Html.DisplayNameFor(model => model.User.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Permission.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="approve_table">
+            @foreach (var item in Model.Where(x => x.StatusID == 2).ToList())
+            {
+                <tr>
+                    <td>
+                        @if (item.User.ImageURL != null)
+                        {
+                            <img src="~/@item.User.ImageURL" height="50" width="50" class="rounded-circle" />
+                        }
+                        else
+                        {
+                            <img src="~/Images/UserImages/default.png" height="50" width="50" class="rounded-circle" />
+                        }
+                        <label id="approve_image_@item.Id" hidden>@Html.DisplayFor(modelItem => item.User.ImageURL)</label>
+                    </td>
+                    <td>
+                        <label id="approve_name_@item.Id">@Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)</label>
+                    </td>
+                    <td>
+                        <label id="approve_startDate_@item.Id">@item.StartDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="approve_endDate_@item.Id">@item.EndDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="approve_perName_@item.Id">@Html.DisplayFor(modelItem => item.Permission.Name)</label>
+                    </td>
+                    <td>
+                        <a href="#" onclick="Detail(@item.Id, 'approve')" data-toggle="modal" data-target="#detailModalLong">Detay</a>
+
+                        <label id="approve_reqDate_@item.Id" hidden>@item.RequestDate.ToLongDateString()</label>
+                        <label id="approve_file_@item.Id" hidden>@item.FileUrl</label>
+                        <label id="approve_docReq_@item.Id" hidden>@item.Permission.DocumentRequired</label>
+                        <label id="approve_rejReason_@item.Id" hidden>@item.RejectReason</label>
+                        <label id="approve_appDate_@item.Id" hidden>@item.ApprovalDate?.ToLongDateString()</label>
+                        <label id="approve_rejDate_@item.Id" hidden>@item.RejectionDate?.ToLongDateString()</label>
+                        <label id="approve_statName_@item.Id" hidden>@item.Status.Name</label>
+                        <label id="onHold_email_@item.Id" hidden>@item.User.Email</label>
+                        <label id="onHold_phone_@item.Id" hidden>@item.User.Phone</label>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="rejected" style="display: none;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.ImageURL)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.FirstName) @Html.DisplayNameFor(model => model.User.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Permission.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="reject_table">
+            @foreach (var item in Model.Where(x => x.StatusID == 3).ToList())
+            {
+                <tr>
+                    <td>
+                        @if (item.User.ImageURL != null)
+                        {
+                            <img src="~/@item.User.ImageURL" height="50" width="50" class="rounded-circle" />
+                        }
+                        else
+                        {
+                            <img src="~/Images/UserImages/default.png" height="50" width="50" class="rounded-circle" />
+                        }
+                        <label id="reject_image_@item.Id" hidden>@Html.DisplayFor(modelItem => item.User.ImageURL)</label>
+                    </td>
+                    <td>
+                        <label id="reject_name_@item.Id">@Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)</label>
+                    </td>
+                    <td>
+                        <label id="reject_startDate_@item.Id">@item.StartDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="reject_endDate_@item.Id">@item.EndDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="reject_perName_@item.Id">@Html.DisplayFor(modelItem => item.Permission.Name)</label>
+                    </td>
+                    <td>
+                        <a href="#" onclick="Detail(@item.Id, 'reject')" data-toggle="modal" data-target="#detailModalLong">Detay</a>
+
+                        <label id="reject_reqDate_@item.Id" hidden>@item.RequestDate.ToLongDateString()</label>
+                        <label id="reject_file_@item.Id" hidden>@item.FileUrl</label>
+                        <label id="reject_docReq_@item.Id" hidden>@item.Permission.DocumentRequired</label>
+                        <label id="reject_rejReason_@item.Id" hidden>@item.RejectReason</label>
+                        <label id="reject_appDate_@item.Id" hidden>@item.ApprovalDate?.ToLongDateString()</label>
+                        <label id="reject_rejDate_@item.Id" hidden>@item.RejectionDate?.ToLongDateString()</label>
+                        <label id="reject_statName_@item.Id" hidden>@item.Status.Name</label>
+                        <label id="onHold_email_@item.Id" hidden>@item.User.Email</label>
+                        <label id="onHold_phone_@item.Id" hidden>@item.User.Phone</label>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@* İzin reddetme pop-up *@
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Red Nedeni</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="rejectReason" style="width: 100%" />
+                <span id="reject_error" class="text-danger"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancel" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="Reject($('#rejectReason').val())">Onayla</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* İzin reddetme pop-up *@
+
+@* İzin detayı görüntüleme pop-up *@
+<div class="modal fade" id="detailModalLong" tabindex="-1" role="dialog" aria-labelledby="detailModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLongTitle">İzin Talebi Detayı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.User.ImageURL)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @*<label id="image2" hidden></label>*@
+                            <img id="image" height="50" width="50" class="rounded-circle" />
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.User.FirstName) @Html.DisplayNameFor(model => model.User.LastName)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="name"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.User.Email)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="email"></label>
+                        </dd>
+                        <dt class="col-sm-4 phone">
+                            @Html.DisplayNameFor(model => model.User.Phone)
+                        </dt>
+                        <dd class="col-sm-8 phone">
+                            <label id="phone"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.RequestDate)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="reqDate"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Permission.Name)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="perName"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.StartDate)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="startDate"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.EndDate)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="endDate"></label>
+                        </dd>
+                        <dt class="col-sm-4 file">
+                            @Html.DisplayNameFor(model => model.FileUrl)
+                        </dt>
+                        <dd class="col-sm-8 file">
+                            @*<label id="file"></label>*@
+                            <a id="file" >İndir</a>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Status.Name)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="statName"></label>
+                        </dd>
+                        <dt class="col-sm-4 app">
+                            @Html.DisplayNameFor(model => model.ApprovalDate)
+                        </dt>
+                        <dd class="col-sm-8 app">
+                            <label id="appDate"></label>
+                        </dd>
+                        <dt class="col-sm-4 rej">
+                            @Html.DisplayNameFor(model => model.RejectionDate)
+                        </dt>
+                        <dd class="col-sm-8 rej">
+                            <label id="rejDate"></label>
+                        </dd>
+                        <dt class="col-sm-4 reason">
+                            @Html.DisplayNameFor(model => model.RejectReason)
+                        </dt>
+                        <dd class="col-sm-8 reason">
+                            <label id="rejReason"></label>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>*@
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+@* İzin detayı görüntüleme pop-up *@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    var allButtons = ["btnOnHold", "btnApproved", "btnRejected"];
+    var allLists = ["#onHold", "#approved", "#rejected"];
+    var rejectedId = 0;
+    var date = "";
+
+    function SetId(id) {
+        rejectedId = id;
+        $("#reject_error").text("");
+    };
+
+    function Change(btn, list) {
+        allButtons.splice(allButtons.indexOf(btn), 1);
+        allLists.splice(allLists.indexOf(list), 1);
+
+        $(allLists.pop() + ", " + allLists.pop()).attr("style", "display: none;");
+        $(list).attr("style", "display: initial");
+
+        document.getElementById(allButtons.pop()).classList.remove('active');
+        document.getElementById(allButtons.pop()).classList.remove('active');
+
+        if (!document.getElementById(btn).classList.contains('active'))
+            document.getElementById(btn).classList.add('active');
+
+        allButtons = ["btnOnHold", "btnApproved", "btnRejected"];
+        allLists = ["#onHold", "#approved", "#rejected"];
+    };
+
+    function Detail(id, list) {
+
+        $("#image").attr("src", "/" + $("#" + list + "_image_" + id).text());
+
+        $("#name").text($("#" + list + "_name_" + id).text());
+        $("#email").text($("#" + list + "_email_" + id).text());
+        $("#phone").text($("#" + list + "_phone_" + id).text());
+        $("#reqDate").text($("#" + list + "_reqDate_" + id).text());
+        $("#perName").text($("#" + list + "_perName_" + id).text());
+        $("#startDate").text($("#" + list + "_startDate_" + id).text());
+        $("#endDate").text($("#" + list + "_endDate_" + id).text());
+        $("#statName").text($("#" + list + "_statName_" + id).text());
+        $("#appDate").text($("#" + list + "_appDate_" + id).text());
+        $("#rejDate").text($("#" + list + "_rejDate_" + id).text());
+        $("#rejReason").text($("#" + list + "_rejReason_" + id).text());
+
+        if ($("#" + list + "_image_" + id).text() == "")
+            $("#image").attr("src", "/Images/UserImages/default.png");
+
+        if ($("#" + list + "_docReq_" + id).text() == "False")
+            $(".file").attr("style", "display: none;");
+        else {
+            $(".file").attr("style", "display: initial;");
+            $("#file").attr("download", $("#" + list + "_name_" + id).text().replace(" ", "_") + "_" + $("#" + list + "_perName_" + id).text().replace(" ", "_") + "_Belgesi");
+            $("#file").attr("href", "/" + $("#" + list + "_file_" + id).text());
+        }
+
+        if ($("#" + list + "_phone_" + id).text() == "")
+            $(".phone").attr("style", "display: none;");
+        else
+            $(".phone").attr("style", "display: initial;");
+
+        if ($("#" + list + "_appDate_" + id).text() == "")
+            $(".app").attr("style", "display: none;");
+        else
+            $(".app").attr("style", "display: initial;");
+
+        if ($("#" + list + "_rejDate_" + id).text() == "") {
+            $(".rej").attr("style", "display: none;");
+            $(".reason").attr("style", "display: none;");
+        }
+        else {
+            $(".rej").attr("style", "display: initial;");
+            $(".reason").attr("style", "display: initial;");
+        }
+    };
+
+    function Approve(id) {
+        $.ajax({
+            url: "/CompanyManager/Home/PermitApprove",
+            type: 'POST',
+            dataType: 'json',
+            data: { "id": id }
+        }).done(function (result) {
+            if (result) {
+                $("#onHold_statName_" + id).text("Onaylandı");
+                GetDate("#onHold_appDate_" + id);
+                $(".remove_" + id).remove();
+                $("#onHold_" + id).appendTo("#approve_table");
+                return;
+            }
+        });
+    };
+
+    function Reject(reason) {
+        if (reason == "") {
+            $("#reject_error").text("Lütfen reddetme nedenini giriniz!");
+            return;
+        }
+
+        $("#cancel").click();
+        var data = [rejectedId, reason]
+        $.ajax({
+            url: "/CompanyManager/Home/PermitReject",
+            type: 'POST',
+            dataType: 'json',
+            data: { "data": data }
+        }).done(function (result) {
+            if (result) {
+                $("#onHold_statName_" + rejectedId).text("Reddedildi");
+                GetDate("#onHold_rejDate_" + rejectedId);
+                $("#onHold_rejReason_" + rejectedId).text(reason);
+                $(".remove_" + rejectedId).remove();
+                $("#onHold_" + rejectedId).appendTo("#reject_table");
+
+                return;
+            }
+        });
+    };
+
+    function GetDate(date_change) {
+        var days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+        var months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+
+        var today = new Date();
+
+        var day = days[today.getDay()];
+        var month = months[today.getMonth()];
+
+        date = today.getDate() + " " + month + " " + today.getFullYear() + " " + day;
+
+        return $(date_change).text(date);
+    };
+</script>

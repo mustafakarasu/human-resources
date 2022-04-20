@@ -1,0 +1,137 @@
+﻿@model HumanResources.Models.Entities.Concrete.Company
+
+@{
+    ViewData["Title"] = "Şirket Güncelle";
+}
+
+<h1>Şirket Güncelle</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Update">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" id="companyName" class="form-control" onkeyup="companyNameControl($('#companyName').val())" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+                <span id="companyName_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ParentCompanyID" class="control-label"></label>
+                <select asp-for="ParentCompanyID" class="form-control" asp-items="ViewBag.pc"><option value=""></option></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" readonly />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Şirket Yöneticisi Adı</label>
+                <input id="FirstName" value="@ViewBag.cm.FirstName" readonly class="form-control" />
+                <span asp-validation-for="Users[0].FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Şirket Yöneticisi Soyadı</label>
+                <input id="LastName" value="@ViewBag.cm.LastName" readonly class="form-control" />
+                <span asp-validation-for="Users[0].LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Paket Adı</label>
+                <input value="@Model.PackageName" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Toplam Paket Tutarı</label>
+                <input value="@Model.PackageTotalPrice" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Paket Süresi</label>
+                <input value="@Model.PackageTime ay" class="form-control" readonly />
+            </div>
+            @{ 
+                string year = Model.PackageStartingDate.Year.ToString();
+                string month = (Model.PackageStartingDate.Month < 10 ? ("0" + Model.PackageStartingDate.Month) : Model.PackageStartingDate.Month.ToString());
+                string day = (Model.PackageStartingDate.Day < 10 ? ("0" + Model.PackageStartingDate.Day) : Model.PackageStartingDate.Day.ToString());
+
+                string startDate = year + "-" + month + "-" + day;
+            }
+            <div class="form-group">
+                <label class="control-label">Paket Başlangıç Tarihi</label>
+                <input type="date" value="@startDate" class="form-control" readonly />
+            </div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input type="submit" value="Güncelle" id="btnUpdate" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+
+    var compName = $("#companyName").val();
+
+    //$(document).ready(function () {
+    //    getPrice($('#packages').val());
+    //});
+
+    //function calculatePrice(price, pkgTime) {
+    //    switch (pkgTime) {
+    //        case 6:
+    //            $('#totalPrice').text((price * 5) + " TL");
+    //            break;
+    //        case 12:
+    //            $('#totalPrice').text((price * 10) + " TL");
+    //            break;
+    //        default:
+    //            $('#totalPrice').text(price + " TL");
+    //            break;
+    //    }
+    //}
+
+    //function getPrice(id) {
+    //    $.ajax({
+    //        url: "/Admin/Company/GetPrice",
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        data: { "id": id }
+    //    }).done(function (result) {
+    //        var time = Number($('#packageTime').val());
+    //        calculatePrice(result, time);
+    //    });
+    //}
+
+    function companyNameControl(companyName) {
+        console.log(compName);
+        if (companyName == compName) {
+            $('#companyName_error').text("");
+            $('#btnUpdate').prop("disabled", false);
+            return;
+        }
+
+        $.ajax({
+            url: "/Admin/Company/IsCompanyNameExist",
+            type: 'POST',
+            dataType: 'json',
+            data: { "companyName": companyName }
+        }).done(function (res) {
+            if (res) {
+                $('#companyName_error').text("Bu şirket adı zaten kayıtlı!");
+                $('#btnUpdate').prop("disabled", true);
+            }
+            else {
+                $('#companyName_error').text("");
+                $('#btnUpdate').prop("disabled", false);
+            }
+        });
+    }
+</script>

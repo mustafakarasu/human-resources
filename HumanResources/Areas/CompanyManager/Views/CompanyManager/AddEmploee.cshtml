@@ -1,0 +1,240 @@
+﻿@model HumanResources.Models.Entities.Concrete.User
+
+@{
+    ViewData["Title"] = "Ekle";
+}
+
+<h1>Personel Ekleme</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddEmploee" asp-controller="CompanyManager" enctype="multipart/form-data" id="userForm">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input id="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input id="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ImageURL" class="control-label"></label>
+                <input asp-for="ImageURL" type="file" />
+                <span asp-validation-for="ImageURL" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" type="date" class="form-control"/>
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+
+            <input asp-for="Password" type="hidden" value="@PasswordHelper.CreateTempPassword()" />
+
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" required />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Salary" class="control-label"></label>
+                <input asp-for="Salary" class="form-control" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
+            <input type="hidden" value="@ViewBag.LoginExtensionEmail" id="loginUserExtensionMail" />
+            <div class="form-group">
+                <label asp-for="HireDate" class="control-label"></label>
+                <input asp-for="HireDate" class="form-control" type="date" />
+                <span asp-validation-for="HireDate" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+            <label asp-for="Unit" class="control-label"></label>
+            <input asp-for="Unit" class="form-control" />
+            <span asp-validation-for="Unit" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="BirthDate" class="control-label"></label>
+            <input asp-for="BirthDate" class="form-control" type="date" />
+            <span asp-validation-for="BirthDate" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="GraduatedFromUniversity" class="control-label"></label>
+            <input asp-for="GraduatedFromUniversity" class="form-control" />
+            <span asp-validation-for="GraduatedFromUniversity" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="IdentityNumber" class="control-label"></label>
+            <input asp-for="IdentityNumber" class="form-control" />
+            <p style="color:red">@ViewBag.Message</p>
+            <span asp-validation-for="IdentityNumber" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Phone" class="control-label"></label>
+            <input asp-for="Phone" class="form-control" placeholder="5351112233" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <div class="form-group">
+                <label asp-for="Role.Name" class="control-label"></label>
+                <select asp-for="RoleId" class="form-control" asp-items="ViewBag.Role"></select>
+            </div>
+        </div>*@
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal" id="modalShow">Kaydet</button>
+
+            <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Kullanıcı Ekleme Onay Ekranı</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label asp-for="FirstName" class="control-label"></label>
+                                <input type="text" class="form-control" name="FirstName" onkeyup="nameChange()" id="firstName" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="LastName" class="control-label"></label>
+                                <input type="text" class="form-control" name="LastName" onkeyup="nameChange()" id="lastName" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email" class="control-label"></label>
+                                <input type="text" class="form-control" oninput="emailChange()" asp-for="Email">
+                                <span id="errorMessage" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">İptal</button>
+                            <input class="btn btn-success" type="submit" value="Onayla" id="acceptBtn" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div>
+    <a asp-action="Index">Personelleri Listele</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script>
+    var loginUserMail = "";
+    var mailControlURL = "";
+    var modal;
+
+    $(document).ready(function () {
+        loginUserMail = $('#loginUserExtensionMail').val();
+        mailControlURL = "/CompanyManager/CompanyManager/IsEmailExist";
+        //var firstName = $('#FirstName').val();
+        //var lastName = $('#LastName').val();
+        //var jobHireDate = $('#HireDate').val();
+
+
+        $('#addUserModal').on('show.bs.modal', function (event) {
+            modal = $(this);
+
+            var firstName = $('#FirstName').val();
+            var lastName = $('#LastName').val();
+
+            modal.find('.modal-body #firstName').val(firstName)
+            modal.find('.modal-body #lastName').val(lastName)
+
+            var mailAddress = CreateMailAddress(firstName, lastName, loginUserMail).toLowerCase();
+
+            mailControl(mailAddress, mailControlURL);
+
+            modal.find('.modal-body #Email').val(mailAddress)
+        });
+
+        $('#acceptBtn').click(function () {
+            if (firstName == "" && lastName == "") {
+                $('#addUserModal').modal('hide');
+            }
+        });
+
+        //setInputFilter(document.getElementById("Phone"), function (value) {
+        //    return /^-?\d*$/.test(value);
+        //});
+
+        //setInputFilter(document.getElementById("IdentityNumber"), function (value) {
+        //    return /^-?\d*$/.test(value);
+        //});
+    });
+
+    function CreateMailAddress(firstName, lastName, extensionUserrMail) {
+        if (firstName.includes(" ")) {
+            firstName = firstName.replace(" ", "");
+        }
+        var mailAddress = firstName.concat(".", lastName, "@@", extensionUserrMail);
+        return fromTurkishToEnglish(mailAddress.toLowerCase());
+    }
+
+    function mailControl(mailAddress, mailControlURL) {
+        $.ajax({
+            url: mailControlURL,
+            type: 'POST',
+            dataType: 'json',
+            data: { "mailAddress": mailAddress }
+        }).done(function (res) {
+            if (res) {
+                $('#errorMessage').text("Bu mail adresi başka kullanıcıya ait. Başka bir tane giriniz.");
+                $('#acceptBtn').prop("disabled", true);
+            }
+            else {
+                $('#errorMessage').text("");
+                $('#acceptBtn').prop("disabled", false);
+            }
+        });
+    }
+
+    function nameChange() {
+        var firstName = $('#firstName').val();
+        var lastName = $('#lastName').val();
+        $('input[name="FirstName"]').val(firstName);
+        $('input[name="LastName"]').val(lastName);
+
+        var mail = CreateMailAddress(firstName, lastName, loginUserMail);
+        modal.find('.modal-body #Email').val(mail)
+        emailChange();
+        return mail;
+    }
+
+    function emailChange() {
+        var email = $('#Email').val();
+        $('input[name="Email"]').val(email);
+        mailControl(email, mailControlURL);
+    }
+
+    function fromTurkishToEnglish(text) {
+        return text.replace('Ğ', 'g')
+            .replace('Ü', 'u')
+            .replace('Ş', 's')
+            .replace('I', 'i')
+            .replace('İ', 'i')
+            .replace('Ö', 'o')
+            .replace('Ç', 'c')
+            .replace('ğ', 'g')
+            .replace('ü', 'u')
+            .replace('ş', 's')
+            .replace('ı', 'i')
+            .replace('ö', 'o')
+            .replace('ç', 'c');
+    }
+</script>

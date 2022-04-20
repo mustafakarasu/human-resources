@@ -1,0 +1,94 @@
+﻿@model HumanResources.Models.Entities.Concrete.Company
+
+@{
+    ViewData["Title"] = "Şirket Detayı";
+}
+
+<h1>Şirket Detayı</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        @{
+            if (Model.Title != null)
+            {
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+            }
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Email
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PackageName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageStartingDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.PackageStartingDate.ToShortDateString()
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageEndDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.PackageEndDate?.ToShortDateString()
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PackageTime) ay
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageTotalPrice)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PackageTotalPrice)
+        </dd>
+        @{
+            if (ViewBag.pc != null)
+            {
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ParentCompany.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @ViewBag.pc.Name
+                </dd>
+            }
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CreatedDate.ToShortDateString()
+        </dd>
+        @{
+            if (Model.ModifiedDate != null)
+            {
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ModifiedDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.ModifiedDate?.ToShortDateString()
+                </dd>
+            }
+        }
+    </dl>
+</div>

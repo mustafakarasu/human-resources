@@ -1,0 +1,59 @@
+﻿@model IEnumerable<HumanResources.Models.Entities.Concrete.Company>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Şirketler</h1>
+<hr />
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+           
+            <th>
+                @Html.DisplayNameFor(model => model.PackageStartingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Package)
+            </th>         
+           <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                <label>@item.Email</label>
+            </td>            
+            <td>
+                <span>@item.PackageStartingDate.ToShortDateString()</span>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Package.Name)
+            </td>
+                    
+            <td>
+                <a asp-action="Update" asp-route-id="@item.Id"><i class="fas fa-edit text-primary"></i></a>&nbsp;
+                <a asp-action="Detail" asp-route-id="@item.Id"><i class="fas fa-list"></i></a>&nbsp;
+                <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

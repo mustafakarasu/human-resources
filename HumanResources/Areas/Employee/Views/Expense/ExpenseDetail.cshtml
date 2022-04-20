@@ -1,0 +1,409 @@
+﻿@model IEnumerable<HumanResources.Models.Entities.Concrete.PersonalExpense>
+
+@{
+    ViewData["Title"] = "Harcama Bildirimleri";
+}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active" id="btnOnHold">
+                <a class="nav-link font-weight-bold" href="#" onclick="Change('btnOnHold', '#onHold')">Beklemedeki Harcamalar</a>
+            </li>
+            <li class="nav-item font-weight-bold" id="btnApproved">
+                <a class="nav-link" href="#" onclick="Change('btnApproved', '#approved')">Onaylanan Harcamalar</a>
+            </li>
+            <li class="nav-item font-weight-bold" id="btnRejected">
+                <a class="nav-link" href="#" onclick="Change('btnRejected', '#rejected')">Reddedilen Harcamalar</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="onHold">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Expense.Name)
+                </th>
+                <th>
+                    Bildirim Tarihi
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExpenseDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Where(x => x.StatusID == 1).ToList())
+            {
+                <tr id="onHold_@item.Id">
+                    <td>
+                        <label id="onHold_expName_@item.Id">@Html.DisplayFor(modelItem => item.Expense.Name)</label>
+                    </td>
+                    <td>
+                        <label id="onHold_notDate_@item.Id">@item.CreatedDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="onHold_expDate_@item.Id">@item.ExpenseDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="onHold_amount_@item.Id">@Html.DisplayFor(modelItem => item.Amount) TL</label>
+                    </td>
+                    <td>
+                        @*<a href="#" onclick="Detail(@item.Id, 'onHold')" data-toggle="modal" data-target="#detailModalLong">Detay</a> <label class="remove_@item.Id">|</label>
+                            <a href="#" class="remove_@item.Id" onclick="Approve(@item.Id)">Onayla</a> <label class="remove_@item.Id">|</label>*@
+                        <a href="#" class="remove_@item.Id" id="reject_@item.Id" data-toggle="modal" data-target="#removeModal" onclick="SetId(@item.Id)"><i class="fas fa-calendar-times"></i></a>
+
+                        @*<label id="onHold_notDate_@item.Id" hidden>@item.RequestDate.ToLongDateString()</label>
+                            <label id="onHold_file_@item.Id" hidden>@item.FileUrl</label>
+                            <label id="onHold_docReq_@item.Id" hidden>@item.Expense.DocumentRequired</label>
+                            <label id="onHold_rejReason_@item.Id" hidden>@item.RejectReason</label>
+                            <label id="onHold_appDate_@item.Id" hidden>@item.ApprovalDate?.ToLongDateString()</label>
+                            <label id="onHold_rejDate_@item.Id" hidden>@item.RejectionDate?.ToLongDateString()</label>
+                            <label id="onHold_statName_@item.Id" hidden>@item.Status.Name</label>
+                            <label id="onHold_email_@item.Id" hidden>@item.User.Email</label>
+                            <label id="onHold_phone_@item.Id" hidden>@item.User.Phone</label>*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="approved" style="display: none;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Expense.Name)
+                </th>
+                <th>
+                    Bildirim Tarihi
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExpenseDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalDate)
+                </th>
+                @*<th></th>*@
+            </tr>
+        </thead>
+        <tbody id="approve_table">
+            @foreach (var item in Model.Where(x => x.StatusID == 2).ToList())
+            {
+                <tr>
+                    <td>
+                        <label id="approve_expName_@item.Id">@Html.DisplayFor(modelItem => item.Expense.Name)</label>
+                    </td>
+                    <td>
+                        <label id="approve_notDate_@item.Id">@item.CreatedDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="approve_expDate_@item.Id">@item.ExpenseDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="approve_amount_@item.Id">@Html.DisplayFor(modelItem => item.Amount) TL</label>
+                    </td>
+                    <td>
+                        <label id="approve_appDate_@item.Id">@item.ApprovalDate?.ToLongDateString()</label>
+                    </td>
+
+                    @*<td>
+                            <a href="#" onclick="Detail(@item.Id, 'approve')" data-toggle="modal" data-target="#detailModalLong">Detay</a>
+
+                            <label id="approve_notDate_@item.Id" hidden>@item.RequestDate.ToLongDateString()</label>
+                            <label id="approve_file_@item.Id" hidden>@item.FileUrl</label>
+                            <label id="approve_docReq_@item.Id" hidden>@item.Expense.DocumentRequired</label>
+                            <label id="approve_rejReason_@item.Id" hidden>@item.RejectReason</label>
+                            <label id="approve_appDate_@item.Id" hidden>@item.ApprovalDate?.ToLongDateString()</label>
+                            <label id="approve_rejDate_@item.Id" hidden>@item.RejectionDate?.ToLongDateString()</label>
+                            <label id="approve_statName_@item.Id" hidden>@item.Status.Name</label>
+                            <label id="onHold_email_@item.Id" hidden>@item.User.Email</label>
+                            <label id="onHold_phone_@item.Id" hidden>@item.User.Phone</label>
+                        </td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="rejected" style="display: none;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Expense.Name)
+                </th>
+                <th>
+                    Bildirim Tarihi
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExpenseDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RejectionDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="reject_table">
+            @foreach (var item in Model.Where(x => x.StatusID == 3).ToList())
+            {
+                <tr>
+                    <td>
+                        <label id="reject_expName_@item.Id">@Html.DisplayFor(modelItem => item.Expense.Name)</label>
+                    </td>
+                    <td>
+                        <label id="reject_notDate_@item.Id">@item.CreatedDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="reject_expDate_@item.Id">@item.ExpenseDate.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <label id="reject_amount_@item.Id">@Html.DisplayFor(modelItem => item.Amount) TL</label>
+                    </td>
+                    <td>
+                        <label id="reject_rejDate_@item.Id">@item.RejectionDate?.ToLongDateString()</label>
+                    </td>
+                    <td>
+                        <a href="#" onclick="Detail(@item.Id, 'reject')" data-toggle="modal" data-target="#detailModalLong"><i class="fas fa-list"></i></a>
+                        @*<label id="reject_docReq_@item.Id" hidden>@item.Expense.DocumentRequired</label>*@
+                        <label id="reject_rejReason_@item.Id" hidden>@item.RejectReason</label>
+                        @*<label id="reject_notDate_@item.Id" hidden>@item.RequestDate.ToLongDateString()</label>*@
+                        <label id="reject_statName_@item.Id" hidden>@item.Status.Name</label>
+                        <label id="reject_detail_@item.Id" hidden>@item.Detail</label>
+                        <label id="reject_file_@item.Id" hidden>@item.ImageUrl</label>
+                        @*<label id="reject_appDate_@item.Id" hidden>@item.ApprovalDate?.ToLongDateString()</label>
+                            <label id="reject_rejDate_@item.Id" hidden>@item.RejectionDate?.ToLongDateString()</label>
+                            <label id="onHold_email_@item.Id" hidden>@item.User.Email</label>
+                            <label id="onHold_phone_@item.Id" hidden>@item.User.Phone</label>*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@* Harcama reddetme pop-up *@
+<div class="modal fade" id="removeModal" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeModalLabel">Harcama Bildirimini İptal Et</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>İptal etmek istediğinizden emin misiniz?</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancel" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-primary" onclick="Remove()">Onayla</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* Harcama reddetme pop-up *@
+
+@* Harcama detayı görüntüleme pop-up *@
+<div class="modal fade" id="detailModalLong" tabindex="-1" role="dialog" aria-labelledby="detailModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLongTitle">Harcama Bildirimi Detayı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Expense.Name)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="expName"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            Bildirim Tarihi
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="notDate"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.ExpenseDate)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="expDate"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Amount) TL
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="amount"></label>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Detail)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="detail"></label>
+                        </dd>
+                        <dt class="col-sm-4 file">
+                            @Html.DisplayNameFor(model => model.ImageUrl)
+                        </dt>
+                        <dd class="col-sm-8 file">
+                            <a id="file">İndir</a>
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Status.Name)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <label id="statName"></label>
+                        </dd>
+                        @*<dt class="col-sm-4 app">
+                                @Html.DisplayNameFor(model => model.ApprovalDate)
+                            </dt>
+                            <dd class="col-sm-8 app">
+                                <label id="appDate"></label>
+                            </dd>*@
+                        <dt class="col-sm-4 rej">
+                            @Html.DisplayNameFor(model => model.RejectionDate)
+                        </dt>
+                        <dd class="col-sm-8 rej">
+                            <label id="rejDate"></label>
+                        </dd>
+                        <dt class="col-sm-4 reason">
+                            @Html.DisplayNameFor(model => model.RejectReason)
+                        </dt>
+                        <dd class="col-sm-8 reason">
+                            <label id="rejReason"></label>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>*@
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+@* Harcama detayı görüntüleme pop-up *@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    var allButtons = ["btnOnHold", "btnApproved", "btnRejected"];
+    var allLists = ["#onHold", "#approved", "#rejected"];
+    var removedId = 0;
+    //var date = "";
+
+    function SetId(id) {
+        removedId = id;
+        //$("#reject_error").text("");
+    };
+
+    function Change(btn, list) {
+        allButtons.splice(allButtons.indexOf(btn), 1);
+        allLists.splice(allLists.indexOf(list), 1);
+
+        $(allLists.pop() + ", " + allLists.pop()).attr("style", "display: none;");
+        $(list).attr("style", "display: initial");
+
+        document.getElementById(allButtons.pop()).classList.remove('active');
+        document.getElementById(allButtons.pop()).classList.remove('active');
+
+        if (!document.getElementById(btn).classList.contains('active'))
+            document.getElementById(btn).classList.add('active');
+
+        allButtons = ["btnOnHold", "btnApproved", "btnRejected"];
+        allLists = ["#onHold", "#approved", "#rejected"];
+    };
+
+    function Detail(id, list) {
+
+        //$("#image").attr("src", "/" + $("#" + list + "_image_" + id).text());
+
+        //$("#name").text($("#" + list + "_name_" + id).text());
+        //$("#email").text($("#" + list + "_email_" + id).text());
+        //$("#phone").text($("#" + list + "_phone_" + id).text());
+        $("#notDate").text($("#" + list + "_notDate_" + id).text());
+        $("#expName").text($("#" + list + "_expName_" + id).text());
+        $("#expDate").text($("#" + list + "_expDate_" + id).text());
+        $("#amount").text($("#" + list + "_amount_" + id).text());
+        $("#detail").text($("#" + list + "_detail_" + id).text());
+        //$("#endDate").text($("#" + list + "_endDate_" + id).text());
+        $("#statName").text($("#" + list + "_statName_" + id).text());
+        $("#appDate").text($("#" + list + "_appDate_" + id).text());
+        $("#rejDate").text($("#" + list + "_rejDate_" + id).text());
+        $("#rejReason").text($("#" + list + "_rejReason_" + id).text());
+
+        //if ($("#" + list + "_image_" + id).text() == "")
+        //    $("#image").attr("src", "/Images/UserImages/Admin/1ca6449f-54b0-46d3-94ba-5a0b1dc2612c.png");
+
+        //if ($("#" + list + "_docReq_" + id).text() == "False")
+        //    $(".file").attr("style", "display: none;");
+        //else {
+        //    $(".file").attr("style", "display: initial;");
+        $("#file").attr("download", $("#" + list + "_name_" + id).text().replace(" ", "_") + "" + $("#" + list + "_expName_" + id).text().replace(" ", "_") + "_Belgesi");
+        $("#file").attr("href", "/" + $("#" + list + "_file_" + id).text());
+        //}
+
+        //if ($("#" + list + "_phone_" + id).text() == "")
+        //    $(".phone").attr("style", "display: none;");
+        //else
+        //    $(".phone").attr("style", "display: initial;");
+
+        if ($("#" + list + "_appDate_" + id).text() == "")
+            $(".app").attr("style", "display: none;");
+        else
+            $(".app").attr("style", "display: initial;");
+
+        if ($("#" + list + "_rejDate_" + id).text() == "") {
+            $(".rej").attr("style", "display: none;");
+            $(".reason").attr("style", "display: none;");
+        }
+        else {
+            $(".rej").attr("style", "display: initial;");
+            $(".reason").attr("style", "display: initial;");
+        }
+    };
+
+    function Remove() {
+        $("#cancel").click();
+        var id = removedId;
+        $.ajax({
+            url: "/Employee/Expense/ExpenseRemove",
+            type: 'POST',
+            dataType: 'json',
+            data: { "id": id }
+        }).done(function (result) {
+            if (result) {
+                //$("#onHold_statName_" + rejectedId).text("Reddedildi");
+                //GetDate("#onHold_rejDate_" + rejectedId);
+                //$("#onHold_rejReason_" + rejectedId).text(reason);
+                $("#onHold_" + removedId).remove();
+                //$("#onHold_" + rejectedId).appendTo("#reject_table");
+
+                return;
+            }
+        });
+    };
+</script>

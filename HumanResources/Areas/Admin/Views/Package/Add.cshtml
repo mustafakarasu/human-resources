@@ -1,0 +1,110 @@
+﻿@model HumanResources.Models.Entities.Concrete.Package
+
+@{
+    ViewData["Title"] = "Add";
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Add" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" id="PackageName">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control " id="Name" onkeyup="NameControl()" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+                <span id="errorMessage2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfUser" class="control-label"></label>
+                <input asp-for="NumberOfUser" class="form-control" id="Numbers" onkeyup="PriceControl()"/>
+                <span asp-validation-for="NumberOfUser" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" type="number" class="form-control" id="Price" onkeyup="PriceControl()" />
+                @*<span asp-validation-for="Price" class="text-danger"></span>*@
+                <span id="errorMessage1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageURL" class="control-label"></label>
+                <input asp-for="ImageURL" type="file" accept="image/*" id="imageFile" onchange="validateFileType()" />
+                <br />
+                <span id="imageFile_error" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Oluştur" id="btnAdd" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Aynı  paket ismi var mı? Kontrol yapılıyor-->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+
+    function ControlAllInputs(valid) {
+
+        if ($("#errorMessage2").text() == "" && $('#errorMessage1').text() == "" && $("#imageFile_error").text() == "") {
+            $('#btnAdd').prop("disabled", false);
+        }
+        else {
+            $('#btnAdd').prop("disabled", true);
+        }
+    }
+
+    function NameControl() {
+        var name = $('#Name').val();
+        var ControlURL = "/Admin/Package/IsPackageExist";
+        $.ajax({
+            url: ControlURL,
+            type: 'POST',
+            dataType: 'json',
+            data: { "name": name }
+        }).done(function (res) {
+            if (res) {
+                $('#errorMessage2').text("Bu paket ismi daha önceden eklenmiştir. Başka bir tane giriniz.");
+                //$('#btnAdd').prop("disabled", true);
+            }
+            else {
+                $('#errorMessage2').text("");
+                //$('#btnAdd').prop("disabled", false);
+            }
+            ControlAllInputs();
+        });
+    }
+
+
+    function PriceControl() {
+        var price = Number($('#Price').val());
+        var number = Math.round(Number($('#Numbers').val()));
+        var key = price / number;
+
+        if (Number(key) < 1 || Number(key) > 1.5 || number == 0) {
+            if (number == 0) {
+                $('#errorMessage1').text("Kullanıcı sayısı 0 olamaz!");
+            }
+            else {
+                $('#errorMessage1').text(number + " TL ile " + (number * 1.5) + " TL aralığında bir fiyat giriniz");
+            }
+            //$('#btnAdd').prop("disabled", true);
+        }
+        else {
+            $('#errorMessage1').text("");
+            //$('#btnAdd').prop("disabled", false);
+        }
+        ControlAllInputs();
+    }
+
+    function validateFileType() {
+        var fileName = document.getElementById("imageFile").value;
+        var idxDot = fileName.lastIndexOf(".") + 1;
+        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+        if (extFile == "jpg" || extFile == "jpeg" || extFile == "png" || fileName == "") {
+            $("#imageFile_error").text("");
+        } else {
+            $("#imageFile_error").text("Sadece jpg, jpeg veya png formatında yükleme yapabilirsiniz!");
+        }
+        ControlAllInputs();
+    }
+</script>

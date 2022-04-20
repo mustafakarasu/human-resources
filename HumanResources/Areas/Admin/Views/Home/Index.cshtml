@@ -1,0 +1,76 @@
+﻿<br />
+<br />
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-header">Site Yöneticileri</div>
+            <div class="card-body">
+                <p>Yönetici Sayısı : <span class="numberInfo">@ViewBag.tso</span></p>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" asp-action="Index" asp-controller="Admin">Detaylar</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-header">Şirketler</div>
+            <div class="card-body">
+                <p>Toplam Şirket Sayısı : <span class="numberInfo">@ViewBag.cpc</span></p>
+                <p>Toplam Şirket Yöneticileri Sayısı: <span class="numberInfo">@ViewBag.tcc</span></p>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" asp-action="Index" asp-controller="Company">Detaylar</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-header">Personeller</div>
+            <div class="card-body">
+
+                <p>Toplam Personel Sayısı : <span class="numberInfo">@ViewBag.tec</span></p>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">Detaylar</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-info text-white mb-4">
+            <div class="card-header">Paketler</div>
+            <div class="card-body">
+                <p>Aktif Paket Sayısı : <span class="numberInfo">@ViewBag.tpc </span></p>
+                @*<p>Toplam Şirket Yöneticileri Sayısı: <span class="numberInfo">70</span></p>*@
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" asp-action="Index" asp-controller="Package">Detaylar</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="row">
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-area mr-1"></i>
+              ŞİRKET SAYISI
+            </div>
+            <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar mr-1"></i>
+                TOPLAM PERSONEL SAYISI
+            </div>
+            <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+        </div>
+    </div>
+</div>*@

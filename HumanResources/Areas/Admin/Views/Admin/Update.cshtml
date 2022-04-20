@@ -1,0 +1,233 @@
+﻿@model HumanResources.Models.Entities.Concrete.User
+
+@{
+    ViewData["Title"] = "Güncelle";
+}
+
+<h1>Site Yöneticisi Güncelleme</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Update" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <input asp-for="Password" type="hidden" />
+            <div class="form-group">
+                <label asp-for="ImageURL" class="control-label"></label>
+                @if (Model.ImageURL == null)
+                {
+                    <span>Kullanıcının resmi bulunmuyor</span>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Resim Yükle :</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input asp-for="ImageURL" type="file" accept="image/*" id="imageFile" onchange="validateFileType()" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="~/@Model.ImageURL" class="rounded-circle" height="75" width="75" />
+                        </div>
+                        <div class="col-md-4">
+                            <input asp-for="ImageURL" type="file" accept="image/*" id="imageFile" onchange="validateFileType()" />
+                        </div>
+                    </div>
+
+                }
+                <input asp-for="ImageURL" type="hidden" />
+                <br />
+                <span id="imageFile_error" class="text-danger"></span>
+            </div>
+            <input asp-for="Email" type="hidden" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            @{ 
+                DateTime hireDate = DateTime.Now.AddYears(-37);
+
+                string hireYear = hireDate.Year.ToString();
+                string hireMonth = hireDate.Month.ToString();
+                string hireDay = hireDate.Day.ToString();
+
+                if (Convert.ToInt32(hireMonth) < 10) hireMonth = "0" + hireMonth;
+                if (Convert.ToInt32(hireDay) < 10) hireDay = "0" + hireDay;
+
+                string minHire = hireYear + "-" + hireMonth + "-" + hireDay;
+
+                hireDate = DateTime.Now.AddMonths(1);
+
+                hireYear = hireDate.Year.ToString();
+                hireMonth = hireDate.Month.ToString();
+                hireDay = hireDate.Day.ToString();
+
+                if (Convert.ToInt32(hireMonth) < 10) hireMonth = "0" + hireMonth;
+                if (Convert.ToInt32(hireDay) < 10) hireDay = "0" + hireDay;
+
+                string maxHire = hireYear + "-" + hireMonth + "-" + hireDay;
+            }
+            <div class="form-group">
+                <label asp-for="HireDate" class="control-label"></label>
+                <input asp-for="HireDate" class="form-control" id="hireDate" type="date" min="@minHire" max="@maxHire" onkeydown="return false"/>
+                <span asp-validation-for="HireDate" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="TerminationDate" />
+            <div class="form-group">
+                <label asp-for="Unit" class="control-label"></label>
+                <input asp-for="Unit" class="form-control" />
+                <span asp-validation-for="Unit" class="text-danger"></span>
+            </div>
+            @{
+                DateTime date = DateTime.Now.AddYears(-18);
+
+                string year = date.Year.ToString();
+                string month = date.Month.ToString();
+                string day = date.Day.ToString();
+
+                if (Convert.ToInt32(month) < 10) month = "0" + month;
+                if (Convert.ToInt32(day) < 10) day = "0" + day;
+
+                string maxBirth = year + "-" + month + "-" + day;
+
+                date = DateTime.Now.AddYears(-65);
+
+                year = date.Year.ToString();
+                month = date.Month.ToString();
+                day = date.Day.ToString();
+
+                if (Convert.ToInt32(month) < 10) month = "0" + month;
+                if (Convert.ToInt32(day) < 10) day = "0" + day;
+
+                string minBirth = year + "-" + month + "-" + day;
+            }
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" id="birthDate" min="@minBirth" max="@maxBirth" type="date" onchange="SetHireDate()" onkeydown="return false" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GraduatedFromUniversity" class="control-label"></label>
+                <input asp-for="GraduatedFromUniversity" class="form-control" />
+                <span asp-validation-for="GraduatedFromUniversity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdentityNumber" class="control-label"></label>
+                <input asp-for="IdentityNumber" class="form-control" />
+                <span asp-validation-for="IdentityNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                @*<input asp-for="Phone" class="form-control" />*@
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="tel" placeholder="+90" class="form-control" id="countryCode" />
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" placeholder="5358967896" asp-for="Phone">
+                    </div>
+                </div>
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="RoleId" />
+            <input type="hidden" asp-for="CreatedDate" />
+            <input type="hidden" asp-for="IsActive" />
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-success" id="saveBtn" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        setInputFilter(document.getElementById("Phone"), function (value) {
+            return /^-?\d*$/.test(value);
+        });
+
+        $('#saveBtn').click(function () {
+            var phone = $('#Phone').val();
+            var countryCode = $('#countryCode').val();
+
+            if (phone == "") {
+                countryCode = "";
+            } else if (countryCode == "") {
+                countryCode = "+90";
+            }
+
+            phone = countryCode.toString() + phone.toString();
+            console.log(phone);
+            $('input[name="Phone"]').val(phone);
+        });
+    });
+
+    function SetHireDate() {
+        var birthDate = new Date($('#birthDate').val());
+        var birthYear = birthDate.getFullYear() + 18;
+        var birthMonth = birthDate.getMonth() + 1;
+        var birthDay = birthDate.getDate();
+
+        var daysInMonth = new Date(birthYear, birthMonth, 0).getDate();
+
+        if (birthMonth < 10) birthMonth = "0" + birthMonth;
+
+        if (birthDay > daysInMonth) birthDay = daysInMonth;
+
+        if (birthDay < 10) birthDay = "0" + birthDay;
+
+        $('#hireDate').attr('min', birthYear + '-' + birthMonth + '-' + birthDay);
+
+        var hireDate = new Date($('#hireDate').val());
+
+        var hireDay = hireDate.getDate();
+        var hireMonth = hireDate.getMonth() + 1;
+        var hireYear = hireDate.getFullYear();
+
+        if (birthYear >= hireYear) {
+            hireYear = birthYear;
+
+            if (birthDate.getMonth() + 1 >= hireMonth) {
+                hireMonth = birthDate.getMonth() + 1;
+
+                if (birthDate.getDate() > hireDay) hireDay = birthDate.getDate();
+            }
+        }
+
+        if (hireMonth < 10) hireMonth = "0" + hireMonth;
+        if (hireDay < 10) hireDay = "0" + hireDay;
+
+        $('#hireDate').val(hireYear + '-' + hireMonth + '-' + hireDay);
+    };
+
+    function validateFileType() {
+        var fileName = document.getElementById("imageFile").value;
+        var idxDot = fileName.lastIndexOf(".") + 1;
+        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+        if (extFile == "jpg" || extFile == "jpeg" || extFile == "png" || fileName == "") {
+            $("#imageFile_error").text("");
+            $("#saveBtn").prop("disabled", false);
+        } else {
+            $("#imageFile_error").text("Sadece jpg, jpeg veya png formatında yükleme yapabilirsiniz!");
+            $("#saveBtn").prop("disabled", true);
+        }
+    }
+</script>

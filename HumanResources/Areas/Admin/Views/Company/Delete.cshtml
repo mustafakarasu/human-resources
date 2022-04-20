@@ -1,0 +1,93 @@
+﻿@model HumanResources.Models.Entities.Concrete.Company
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h3>Şirketi silmek istediğinizden emin misiniz?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        @{
+            if (Model.Title != null)
+            {
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+            }
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Email
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PackageName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageStartingDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.PackageStartingDate.ToShortDateString()
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PackageTime) ay
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageTotalPrice)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PackageTotalPrice)
+        </dd>
+        @{
+            if (ViewBag.pc != null)
+            {
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ParentCompany.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    <label>@ViewBag.pc.Name</label>
+                </dd>
+            }
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CreatedDate.ToShortDateString()
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ModifiedDate)
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                if (Model.ModifiedDate != null)
+                {
+                    DateTime updatedDate = (DateTime)Model.ModifiedDate;
+                    <label>@updatedDate.ToShortDateString()</label>
+                }
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Şirketi Sil" class="btn btn-danger" />
+    </form>
+</div>

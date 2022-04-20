@@ -1,0 +1,56 @@
+﻿@model IEnumerable<HumanResources.Models.Entities.Concrete.Package>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<h1>Paketler</h1>
+<hr />
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                Paket Resmi
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfUser)
+            </th>
+            <th>
+                Aylık @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (item.ImageURL != null)
+                    {
+                        <img src="~/@item.ImageURL" height="50" width="50" class="rounded-circle" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/package_default.png" height="50" width="50" class="rounded-circle" />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfUser)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    <a asp-action="Update" asp-route-id="@item.Id">Güncelle</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
